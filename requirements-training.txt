@@ -1,0 +1,13 @@
+tensorflow>=2.13
+opencv-python
+Pillow
+PyYAML
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+imagehash
+tqdm
+psutil
+python-dotenv

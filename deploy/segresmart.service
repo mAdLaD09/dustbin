@@ -1,0 +1,15 @@
+[Unit]
+Description=SegreSmart offline waste sorter
+After=local-fs.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/SegreSmart
+ExecStart=/home/pi/SegreSmart/.venv/bin/python /home/pi/SegreSmart/src/pi/main.py --headless
+Restart=on-failure
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

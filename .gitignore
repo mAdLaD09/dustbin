@@ -1,0 +1,14 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+datasets/raw/*
+datasets/empty/*
+datasets/processed/*
+models/*.keras
+models/*.tflite
+outputs/*
+logs/*
+!outputs/.gitkeep
+!logs/.gitkeep
