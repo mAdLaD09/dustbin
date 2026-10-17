@@ -8,6 +8,7 @@ from collections import Counter
 from pathlib import Path
 from xml.etree import ElementTree
 from PIL import Image, ImageOps
+import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.common.config import load_config
 from src.common.mapping import map_label
@@ -40,11 +41,17 @@ def process_folder(source: Path, out: Path, rows: list, cfg: dict) -> None:
 
 def process_yolo(source: Path, out: Path, rows: list, cfg: dict) -> set[str]:
     labels = {}
+    metadata = source / "data.yaml"
+    if metadata.exists():
+        data = yaml.safe_load(metadata.read_text(encoding="utf-8")) or {}
+        labels = {str(i): str(name) for i, name in enumerate(data.get("names", []))}
     for f in source.rglob("*.names"):
         labels = {str(i): x.strip() for i, x in enumerate(f.read_text(encoding="utf-8", errors="ignore").splitlines())}
     for ann in source.rglob("*.txt"):
         if ann.name.lower() == "classes.txt": continue
-        image = next((ann.with_suffix(ext) for ext in EXTS if ann.with_suffix(ext).exists()), None)
+        image_stem = ann.stem
+        image_dir = ann.parent.parent / "images" if ann.parent.name.lower() == "labels" else ann.parent
+        image = next((image_dir / (image_stem + ext) for ext in EXTS if (image_dir / (image_stem + ext)).exists()), None)
         if not image: continue
         try: im = ImageOps.exif_transpose(Image.open(image)).convert("RGB"); w, h = im.size
         except Exception: continue
